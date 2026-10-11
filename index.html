@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPLITZY — Split Bills. Not Friendships | Precision Bill Splitter</title>
+    <meta name="description" content="Split bills effortlessly with 100% mathematical precision down to the exact paisa. Beautiful, instant, and private bill splitting for dinners, trips, and shared expenses." />
+    <meta property="og:title" content="SPLITZY — Split Bills. Not Friendships" />
+    <meta property="og:description" content="Precision fintech bill-splitting application. Split every bill fairly down to the paisa with zero penny drift." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Ambient visual backdrop lighting -->
+    <div class="ambient-glow" aria-hidden="true"></div>
+
+    <!-- Canvas for celebratory confetti -->
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="nav-container">
+        <a href="#" class="nav-brand" aria-label="SPLITZY Home">
+          <div class="brand-icon">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="5" width="26" height="22" rx="7" fill="url(#brandGrad)" />
+              <path d="M11 11L21 21" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
+              <circle cx="12" cy="20" r="2" fill="#FFFFFF" />
+              <circle cx="20" cy="12" r="2" fill="#FFFFFF" />
+              <defs>
+                <linearGradient id="brandGrad" x1="3" y1="5" x2="29" y2="27" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#8B5CF6" />
+                  <stop offset="0.5" stop-color="#6366F1" />
+                  <stop offset="1" stop-color="#22D3EE" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <span class="brand-wordmark">SPLITZY</span>
+          <span class="nav-tagline">Made for moments</span>
+        </a>
+
+        <div class="nav-actions">
+          <button id="historyToggleBtn" class="nav-btn" aria-label="View recent saved splits">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Recent Splits</span>
+          </button>
+
+          <button id="themeToggleBtn" class="icon-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
+            <span id="themeIcon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>The smarter way to split</span>
+        </div>
+        <h1 class="hero-headline">
+          Good times.<br />
+          <span class="gradient-text">Fair shares.</span>
+        </h1>
+        <p class="hero-subhead">
+          From dinner dates to weekend getaways, split every bill effortlessly. No awkward math. No confusion.
+        </p>
+
+        <div class="hero-trust-strip">
+          <div class="trust-item">
+            <span class="trust-dot"></span>
+            <span>100% Exact to the Paisa</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-dot"></span>
+            <span>Zero Rounding Drift</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-dot"></span>
+            <span>Completely Private</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Splitting Workspace -->
+      <div id="workspaceContainer" class="workspace-container view-configuration">
+        <div id="workspaceGrid" class="workspace-grid">
+          
+          <!-- Bill Configuration Form Card -->
+          <div id="formCard" class="card form-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <div class="card-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                  </svg>
+                </div>
+                <h2 class="card-title">Bill Configuration</h2>
+              </div>
+
+              <!-- Segmented Split Mode Selector -->
+              <div class="segmented-control" role="tablist" aria-label="Split modes">
+                <button type="button" class="segmented-btn active" data-mode="equal" role="tab" aria-selected="true">
+                  Equal Split
+                </button>
+                <button type="button" class="segmented-btn" data-mode="custom" role="tab" aria-selected="false">
+                  Custom Split
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Element -->
+            <form id="billForm" novalidate autocomplete="off">
+              <!-- Field 1: Occasion Name -->
+              <div class="form-group">
+                <label for="occasionInput" class="form-label">
+                  <span>Occasion</span>
+                  <span class="form-label-hint">Optional</span>
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    id="occasionInput"
+                    class="form-input"
+                    placeholder="Friday night dinner"
+                    maxlength="60"
+                  />
+                </div>
+              </div>
+
+              <!-- Field 2: Total Bill Amount -->
+              <div class="form-group">
+                <label for="billAmountInput" class="form-label">
+                  <span>Total Bill Amount</span>
+                  <span class="form-label-hint">Up to 2 decimals</span>
+                </label>
+                <div class="input-wrapper">
+                  <span class="currency-symbol">₹</span>
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    id="billAmountInput"
+                    class="form-input currency-input"
+                    placeholder="2,450.00"
+                    required
+                  />
+                </div>
+                <!-- Quick Amount Preset Chips -->
+                <div class="quick-chips" aria-label="Quick amount presets">
+                  <button type="button" class="chip-btn" data-amount="500">₹500</button>
+                  <button type="button" class="chip-btn" data-amount="1200">₹1,200</button>
+                  <button type="button" class="chip-btn" data-amount="2450">₹2,450</button>
+                  <button type="button" class="chip-btn" data-amount="5000">₹5,000</button>
+                </div>
+              </div>
+
+              <!-- Field 3: Number of People -->
+              <div class="form-group">
+                <label for="peopleCountInput" class="form-label">
+                  <span>Number of People</span>
+                  <span class="form-label-hint">Whole numbers only</span>
+                </label>
+                <div class="stepper-container">
+                  <button type="button" id="decreasePeopleBtn" class="stepper-btn" aria-label="Decrease participant count">
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    id="peopleCountInput"
+                    class="form-input stepper-input"
+                    value="4"
+                    min="1"
+                    max="50"
+                    step="1"
+                    required
+                  />
+                  <button type="button" id="increasePeopleBtn" class="stepper-btn" aria-label="Increase participant count">
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <!-- Custom Split Interactive Breakdown (Revealed when Custom Split active) -->
+              <div id="customSplitSection" class="custom-split-section">
+                <div class="custom-split-header">
+                  <strong>Individual Contributions</strong>
+                  <span id="unallocatedBadge" class="unallocated-badge">Matched: 100%</span>
+                </div>
+                <div id="customParticipantsList" class="custom-participants-list">
+                  <!-- Dynamically populated rows in custom mode -->
+                </div>
+                <div class="custom-actions-bar">
+                  <button type="button" id="distributeRemainingBtn" class="text-action-btn btn-ghost">
+                    Distribute remaining equally
+                  </button>
+                </div>
+              </div>
+
+              <!-- Inline Validation Error Alert -->
+              <div id="validationAlert" class="validation-alert" role="alert" aria-live="polite">
+                <div class="alert-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <div id="alertMessage" class="alert-message"></div>
+              </div>
+
+              <!-- Primary Form Actions -->
+              <div class="form-actions">
+                <button type="submit" id="splitBtn" class="primary-btn btn">
+                  <span class="btn-text">Split the Bill</span>
+                  <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                  <svg class="spinner-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+                  </svg>
+                </button>
+                <button type="button" id="resetBtn" class="secondary-btn btn" title="Reset form and clear calculation">
+                  Reset
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Visual Preview & Results Dashboard Card -->
+          <div id="resultsCard" class="card results-card">
+            
+            <!-- State A: Empty State (Default on Load & Refresh) -->
+            <div id="emptyState" class="empty-state">
+              <div class="empty-illustration">
+                <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Subtle background circle -->
+                  <circle cx="70" cy="70" r="54" fill="url(#emptyBgGrad)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" />
+                  <!-- Stylized receipt ticket -->
+                  <rect x="42" y="32" width="56" height="76" rx="8" fill="#171B2E" stroke="rgba(139, 92, 246, 0.35)" stroke-width="1.5" />
+                  <!-- Ticket perforation notches -->
+                  <circle cx="42" cy="70" r="4" fill="#080A12" />
+                  <circle cx="98" cy="70" r="4" fill="#080A12" />
+                  <!-- Receipt lines -->
+                  <rect x="52" y="44" width="22" height="3" rx="1.5" fill="#8B5CF6" />
+                  <rect x="52" y="52" width="36" height="2" rx="1" fill="rgba(255, 255, 255, 0.2)" />
+                  <rect x="52" y="58" width="28" height="2" rx="1" fill="rgba(255, 255, 255, 0.2)" />
+                  <line x1="50" y1="70" x2="90" y2="70" stroke="rgba(255, 255, 255, 0.15)" stroke-dasharray="2 2" />
+                  <rect x="52" y="80" width="36" height="3" rx="1.5" fill="#22D3EE" />
+                  <rect x="52" y="88" width="18" height="2" rx="1" fill="rgba(255, 255, 255, 0.2)" />
+                  <!-- Sparkle accents -->
+                  <path d="M100 28L102 33L107 35L102 37L100 42L98 37L93 35L98 33L100 28Z" fill="#A78BFA" />
+                  <path d="M36 94L37.5 98L41.5 99.5L37.5 101L36 105L34.5 101L30.5 99.5L34.5 98L36 94Z" fill="#22D3EE" />
+                  <defs>
+                    <radialGradient id="emptyBgGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(70 70) rotate(90) scale(54)">
+                      <stop stop-color="#8B5CF6" stop-opacity="0.1" />
+                      <stop offset="1" stop-color="#101320" stop-opacity="0.4" />
+                    </radialGradient>
+                  </defs>
+                </svg>
+              </div>
+              <h3 class="empty-title">Your split will appear here</h3>
+              <p class="empty-desc">
+                Enter your bill details on the left and click Split the Bill to generate fair shares to the exact paisa.
+              </p>
+              <div class="empty-hint-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Guaranteed Zero Penny Rounding Loss</span>
+              </div>
+            </div>
+
+            <!-- State B: Active Results Dashboard (Smooth Reveal) -->
+            <div id="resultsDashboard" class="results-dashboard" role="region" aria-live="polite">
+              
+              <!-- Printable Receipt Header (visible only when printing) -->
+              <div class="print-receipt-header" style="display: none;">
+                <h1>SPLITZY</h1>
+                <p>Fair shares. Reconciled to the exact paisa.</p>
+                <p id="printReceiptPayee" class="print-receipt-payee" style="display: none;"></p>
+              </div>
+
+              <!-- Top Status Strip -->
+              <div class="results-top-strip">
+                <div class="occasion-display">
+                  <button type="button" id="resultsEditBtn" class="edit-split-btn btn" aria-label="Edit bill configuration" title="Return to configuration to adjust details">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Edit Bill</span>
+                  </button>
+                  <span id="resultOccasion" class="occasion-pill">Friday night dinner</span>
+                  <span id="resultDate" class="results-date">Today · 9:30 PM</span>
+                </div>
+                <div class="results-top-actions">
+                  <div class="exact-guarantee-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Exact Reconciled</span>
+                  </div>
+                  <button type="button" id="resultsResetTopBtn" class="top-reset-btn btn" title="Reset bill and return to configuration">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>Reset</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Share Summary Hero Banner -->
+              <div class="share-summary-hero">
+                <div class="summary-metric-group">
+                  <span class="summary-metric-label">Per-Person Share</span>
+                  <span id="resultHeroAmount" class="summary-metric-value tabular-nums">₹612.50</span>
+                  <span id="resultHeroSubtext" class="summary-metric-subtext">Equal share across all 4 participants</span>
+                </div>
+                <div class="total-split-pill">
+                  <div class="total-pill-label">Total Bill</div>
+                  <div id="resultTotalBill" class="total-pill-value tabular-nums">₹2,450.00</div>
+                </div>
+              </div>
+
+              <!-- Donut Split Visualization -->
+              <div class="chart-container">
+                <svg id="donutChartSvg" class="svg-donut-chart" viewBox="0 0 220 220" role="img" aria-label="Visual breakdown of participant shares">
+                  <!-- Dynamic SVG Circles injected via JavaScript -->
+                </svg>
+                <div class="chart-center-content">
+                  <div class="center-label">Total Split</div>
+                  <div id="chartCenterTotal" class="center-amount tabular-nums">₹2,450.00</div>
+                  <div id="chartCenterCount" class="center-count">4 participants</div>
+                </div>
+              </div>
+
+              <!-- Participant Cards Section -->
+              <div class="participants-section-title">
+                <span>Participant Breakdown</span>
+                <span class="form-label-hint">Click any name to rename</span>
+              </div>
+              <div id="participantsGrid" class="participants-grid">
+                <!-- Dynamically rendered participant cards -->
+              </div>
+
+              <!-- UPI Payment & Settle Up Section (Revealed upon successful calculation) -->
+              <section id="paymentSection" class="payment-section" aria-labelledby="paymentSectionHeading">
+                <div class="payment-section-header">
+                  <div class="payment-title-group">
+                    <div class="payment-kicker">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="2" y="5" width="20" height="14" rx="3" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                      </svg>
+                      <span>Direct UPI Payment</span>
+                    </div>
+                    <h3 id="paymentSectionHeading" class="payment-heading">Settle up, effortlessly.</h3>
+                    <p class="payment-subhead">Your share is ready. Pay securely using your preferred UPI app.</p>
+                  </div>
+
+                  <!-- Recipient configuration toggle button -->
+                  <div class="recipient-config-toggle-wrapper">
+                    <button type="button" id="toggleRecipientConfigBtn" class="recipient-badge-btn" aria-expanded="false" title="Configure recipient UPI ID">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                      </svg>
+                      <span id="recipientStatusText">Recipient: Not configured</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Recipient Configuration Drawer (Collapsible) -->
+                <div id="recipientConfigDrawer" class="recipient-config-drawer" style="display: none;">
+                  <div class="recipient-form-box">
+                    <div class="recipient-form-title-row">
+                      <span class="recipient-form-title">Recipient UPI Details</span>
+                      <span class="recipient-form-hint">Who should receive the payments?</span>
+                    </div>
+                    <div class="recipient-inputs-grid">
+                      <div class="recipient-input-field">
+                        <label for="recipientNameInput" class="form-label">Recipient Display Name</label>
+                        <input type="text" id="recipientNameInput" class="form-input" placeholder="e.g. Rahul Sharma" autocomplete="off" />
+                      </div>
+                      <div class="recipient-input-field">
+                        <label for="recipientUpiInput" class="form-label">Recipient UPI ID <span class="required-indicator">*</span></label>
+                        <div class="upi-field-container">
+                          <input type="text" id="recipientUpiInput" class="form-input" placeholder="username@bank (e.g. rahul@okaxis)" autocomplete="off" />
+                          <span id="upiValidationIcon" class="upi-valid-badge" aria-hidden="true"></span>
+                        </div>
+                        <span id="upiValidationMsg" class="field-hint">e.g. name@okhdfcbank, mobile@paytm</span>
+                      </div>
+                    </div>
+                    <div class="recipient-form-actions">
+                      <button type="button" id="saveRecipientBtn" class="btn recipient-save-btn">Save Recipient</button>
+                      <button type="button" id="cancelRecipientBtn" class="btn recipient-cancel-btn">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Alert banner if recipient is not configured -->
+                <div id="missingRecipientAlert" class="missing-recipient-alert" role="alert">
+                  <div class="alert-icon-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                  </div>
+                  <div class="alert-text-box">
+                    <span class="alert-main-text">Add the recipient's UPI ID to enable payments.</span>
+                    <span class="alert-sub-text">Enter the host or payee's UPI ID so members can pay their exact calculated share.</span>
+                  </div>
+                  <button type="button" id="setupRecipientPromptBtn" class="btn prompt-config-btn">Configure Now</button>
+                </div>
+
+                <!-- Main Payment Card -->
+                <div id="paymentActiveCard" class="payment-active-card">
+                  
+                  <!-- Participant Selector -->
+                  <div class="payer-selection-block">
+                    <div class="payer-selection-header">
+                      <label for="payerSelect" class="form-label">Select Person to Pay For:</label>
+                      <span class="form-label-hint">Each person's exact share reconciled down to the paisa</span>
+                    </div>
+
+                    <div class="payer-selector-row">
+                      <!-- Dropdown for standard / keyboard selection -->
+                      <select id="payerSelect" class="payer-select-dropdown" aria-label="Select person to pay for">
+                        <!-- Injected dynamically from calculated shares -->
+                      </select>
+
+                      <!-- Quick Participant Pill Selector Strip -->
+                      <div id="payerChips" class="payer-chips-strip" role="tablist" aria-label="Participant quick select pills">
+                        <!-- Injected dynamically -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Active Payer Summary Highlight -->
+                  <div class="payer-highlight-card">
+                    <div class="payer-identity">
+                      <div id="payerAvatarBadge" class="payer-avatar">1</div>
+                      <div class="payer-name-group">
+                        <span class="payer-kicker">Calculating share for</span>
+                        <span id="payerNameDisplay" class="payer-name-text">Person 1</span>
+                      </div>
+                    </div>
+
+                    <div class="payer-financials">
+                      <span class="payer-amount-title">Exact Share</span>
+                      <span id="payerAmountDisplay" class="payer-amount-val tabular-nums">₹0.00</span>
+                    </div>
+                  </div>
+
+                  <!-- Payment Action Buttons Group -->
+                  <div class="payment-actions-group">
+                    <!-- Primary Button: Pay My Share -->
+                    <a id="payMyShareBtn" class="btn payment-cta-btn primary-pay-btn" role="button" href="#">
+                      <svg class="btn-pay-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="5" width="20" height="14" rx="3" />
+                        <line x1="2" y1="10" x2="22" y2="10" />
+                      </svg>
+                      <span class="btn-text">Pay My Share</span>
+                      <svg class="btn-pay-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </a>
+
+                    <!-- Secondary Button: Open UPI App -->
+                    <a id="openUpiAppBtn" class="btn payment-secondary-btn" role="button" href="#">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      <span>Open UPI App</span>
+                    </a>
+
+                    <!-- Third Option: Scan to Pay -->
+                    <button type="button" id="scanToPayBtn" class="btn payment-qr-trigger-btn">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <line x1="14" y1="14" x2="14" y2="14.01" stroke-width="3" />
+                        <line x1="14" y1="18" x2="21" y2="18" />
+                        <line x1="18" y1="14" x2="21" y2="14" />
+                        <line x1="18" y1="21" x2="21" y2="21" />
+                      </svg>
+                      <span>Scan to Pay</span>
+                    </button>
+                  </div>
+
+                  <!-- User-Confirmed Paid Checkbox -->
+                  <div class="user-paid-check-wrapper">
+                    <label class="paid-checkbox-label" for="markPaidCheckbox">
+                      <input type="checkbox" id="markPaidCheckbox" class="paid-checkbox-input" />
+                      <span class="paid-checkbox-box">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                      <span id="markPaidLabel" class="paid-checkbox-text">Mark as paid (User-confirmed status · Not bank-verified)</span>
+                    </label>
+                  </div>
+
+                  <!-- Security & Transparency Notice -->
+                  <div class="payment-security-notice">
+                    <div class="security-badge-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                      <span>Payment is completed securely in your UPI app.</span>
+                    </div>
+                    <p class="security-caption">
+                      SPLITZY generates a direct, tamper-safe UPI intent with the exact share. When clicked, your device opens a compatible UPI application (Google Pay, PhonePe, Paytm, BHIM, or your bank's UPI app) where you can review details and securely authorize the transaction. SPLITZY never requests or stores your UPI PIN, OTP, or banking credentials.
+                    </p>
+                  </div>
+
+                </div>
+              </section>
+
+              <!-- Results Action Toolbar -->
+              <div class="results-toolbar">
+                <button type="button" id="resultsResetBtn" class="toolbar-btn btn" title="Clear calculation and return to configuration">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                  </svg>
+                  <span>Reset</span>
+                </button>
+                <button type="button" id="copySummaryBtn" class="toolbar-btn primary-toolbar-btn btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy Summary</span>
+                </button>
+                <button type="button" id="shareBtn" class="toolbar-btn btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
+                  <span>Share</span>
+                </button>
+                <button type="button" id="printReceiptBtn" class="toolbar-btn btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                  <span>Print Receipt</span>
+                </button>
+                <button type="button" id="saveHistoryBtn" class="toolbar-btn btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  <span>Save to History</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Recent Splits Modal (History Drawer) -->
+    <div id="historyModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="historyModalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="historyModalTitle" class="modal-title">Recent Splits</h3>
+          <button id="closeHistoryBtn" class="icon-btn" aria-label="Close recent splits modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="historyList" class="history-list">
+            <!-- Dynamically populated past splits -->
+          </div>
+          <div id="emptyHistoryNotice" class="empty-history-notice" style="display: none;">
+            <div class="empty-history-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <p>No saved splits yet. Click "Save to History" after calculating to keep a record.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="clearHistoryBtn" class="nav-btn btn-danger" style="color: var(--error);">
+            Clear All History
+          </button>
+          <span class="form-label-hint">Stored strictly in local storage</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code UPI Payment Modal (Scan to Pay) -->
+    <div id="qrPaymentModal" class="modal-overlay qr-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle" style="display: none;">
+      <div class="modal-card qr-modal-card">
+        <div class="modal-header qr-modal-header">
+          <div class="qr-brand-heading-group">
+            <div class="qr-brand-tag">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="2" y="5" width="20" height="14" rx="3" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+              <span>SPLITZY Pay</span>
+            </div>
+            <h3 id="qrModalTitle" class="modal-title">Scan to Pay via UPI</h3>
+          </div>
+          <button id="closeQrModalBtn" class="icon-btn" aria-label="Close QR payment modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body qr-modal-body">
+          <!-- Payment Meta Breakdown -->
+          <div class="qr-payment-meta-card">
+            <div class="qr-meta-row">
+              <span class="qr-meta-label">Recipient:</span>
+              <div class="qr-recipient-details">
+                <span id="qrRecipientNameDisplay" class="qr-recipient-name">Host</span>
+                <span id="qrRecipientUpiDisplay" class="qr-upi-badge">host@upi</span>
+              </div>
+            </div>
+            <div class="qr-meta-row">
+              <span class="qr-meta-label">Paying For:</span>
+              <span id="qrPayerNameDisplay" class="qr-meta-val">Person 1</span>
+            </div>
+            <div class="qr-meta-row qr-meta-amount-row">
+              <span class="qr-meta-label">Amount:</span>
+              <span id="qrAmountDisplay" class="qr-meta-amount tabular-nums">₹0.00</span>
+            </div>
+            <div class="qr-meta-row">
+              <span class="qr-meta-label">Occasion:</span>
+              <span id="qrOccasionDisplay" class="qr-meta-occasion">Split Bill</span>
+            </div>
+          </div>
+
+          <!-- High-Contrast Clean QR Container -->
+          <div class="qr-canvas-center-wrap">
+            <div class="qr-white-sheet">
+              <canvas id="upiQrCanvas" width="240" height="240" aria-label="UPI Payment QR Code"></canvas>
+            </div>
+          </div>
+
+          <p class="qr-scan-guide">
+            Scan with a compatible UPI app to review and pay.
+          </p>
+
+          <!-- Apps strip -->
+          <div class="qr-apps-banner">
+            <span class="qr-app-tag">Google Pay</span>
+            <span class="qr-app-tag">PhonePe</span>
+            <span class="qr-app-tag">Paytm</span>
+            <span class="qr-app-tag">BHIM</span>
+            <span class="qr-app-tag">Any UPI App</span>
+          </div>
+        </div>
+
+        <div class="modal-footer qr-modal-footer">
+          <span class="qr-security-note">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Zero data stored · Payment verified in UPI app only
+          </span>
+          <button type="button" id="closeQrModalBottomBtn" class="nav-btn">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- Vanilla Script -->
+    <script src="./script.js"></script>
+  </body>
+</html>
